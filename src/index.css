@@ -1,0 +1,28 @@
+body {
+  background-color: #f5e8cf;
+}
+
+h1,h2,h3 {
+  color: #6b3524;
+}
+button {
+    background-color: #c46a32;
+    border-color: #c46a32;
+}
+
+p{
+    color: #637344;
+}
+
+article {
+    background-color :#fff9ef;
+    border:2px solid #d4a044;
+    border-left: 6px solid #6b3524;
+    border-radius: 12px;
+}
+
+.meal-grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: 20px;
+}
