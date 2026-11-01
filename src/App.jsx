@@ -1,29 +1,16 @@
-import 
-{ useEffect, useState } from 'react';
 import { supabase } from './supabaseClient';
+import MealCard from './MealCard';
+import {useTable} from './useTable';
 
 function App() {
-  const [meals, setMeals] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState('');
-      useEffect(() => {
-        async function fetchMeals(){
-        const { data, error } = await supabase
-        .from('meals')
-        .select('*');  
+  const {
+    rows,
+    setRows,
+    loading: tableLoading,
+    errorMessage: tableError,
+  } = useTable('meals');
 
-        if (error) {
-          console.error('Error fetching meals: ', error);
-          setErrorMessage('Unable to load meals...');
-          setLoading(false);
-          return;
-        }       
 
-        setMeals(data);
-        setLoading(false);
-      }
-       fetchMeals();
-      }, []);
       
       async function addMeal (event) {
         event.preventDefault();
@@ -48,23 +35,33 @@ function App() {
       }
 
       async function removeMeal(id) {
-        
-      }
+        const {error} = await supabase
+             .from('meals')
+             .delete()
+             .eq('id', id);
+        if (error) {
+          console.error('Error removing meal:', error);
+          return;
+           }
+            setRows((currentRows) =>
+            currentRows.filter((meal) => meal.id !==id)
+          );
+        }
+      
     return (
     <main>
       <h1> Potluck Extraordinaire </h1>
-      {loading && <p>Loading Meals...</p>}
-      {!loading && !errorMessage && meals.length === 0 &&
+      {tableLoading && <p>Loading Meals...</p>}
+      {!tableLoading && !tableError && rows.length === 0 &&
        <p> No Meals Found</p>}
-       {errorMessage && <p>{errorMessage}</p>}
+       {tableError && <p>{tableError}</p>}
        <div className="meal-grid">
-      {meals.map((meal) => (
-        <article key={meal.id}>
-      <p key={meal.id}>{meal.name} - 
-      {meal.guest} - {meal.servings} servings - Ingredients: 
-      {meal.ingredients?.join(',') || 
-      'Ingredients not listed'}</p>
-      </article>
+      {rows.map((meal) => (
+        <MealCard
+        key={meal.id}
+        meal={meal}
+        removeMeal={removeMeal}
+        />
     ))}
     </div>
     <form onSubmit={addMeal}>
