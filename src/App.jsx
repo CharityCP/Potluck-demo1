@@ -28,6 +28,7 @@ function App() {
 
         if (error) {
           console.error('Error adding meal:', error);
+          alert('Unable to add meal. Please try again.');
           return;
         }
         form.reset();
@@ -41,6 +42,7 @@ function App() {
              .eq('id', id);
         if (error) {
           console.error('Error removing meal:', error);
+          alert('Unable to add remove meal. Please try again.');
           return;
            }
             setRows((currentRows) =>
